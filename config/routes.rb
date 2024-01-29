@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
-  resources :activities
-  resources :resources
   scope '/api/v1' do
+    resources :activities do
+      member do
+        post 'evaluate', to: 'activities#evaluate'
+      end
+    end
+
+
+    resources :resources
     resources :characters do
       member do
         post 'start_gathering', to: 'characters#start_gathering'

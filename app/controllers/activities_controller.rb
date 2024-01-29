@@ -38,6 +38,35 @@ class ActivitiesController < ApplicationController
     @activity.destroy!
   end
 
+  def evaluate
+    @activity = Activity.find(params[:id])
+    is_ended = @activity.end_time < Time.now
+    is_evaluated = @activity.is_evaluated
+
+    if not is_ended
+      render json: { error: 'Activity is not ended yet' }, status: :unprocessable_entity
+      return
+    end
+
+    if is_evaluated
+      render json: { error: 'Activity is already evaluated' }, status: :unprocessable_entity
+      return
+    end
+
+    if is_ended && !is_evaluated
+      resources_gained = ResourceGenerator.generate_resources
+
+      resources_gained.each do |type, amount|
+        @activity.character.settlement.update_resource(type, amount)
+      end
+
+      @activity.is_evaluated = Time.now
+      @activity.save!
+    end
+
+    render json: { resources_gained: resources_gained }
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_activity

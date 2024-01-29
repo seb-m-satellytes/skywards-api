@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_29_130902) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_29_140233) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
     t.datetime "start_time"
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_29_130902) do
     t.integer "settlement_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "is_evaluated"
   end
 
   create_table "characters", force: :cascade do |t|
@@ -35,7 +36,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_29_130902) do
 
   create_table "resources", force: :cascade do |t|
     t.string "resource_type"
-    t.integer "amount"
+    t.integer "amount", default: 0
     t.string "resourceable_type"
     t.integer "resourceable_id"
     t.datetime "created_at", null: false
