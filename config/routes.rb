@@ -5,16 +5,20 @@ Rails.application.routes.draw do
         post 'evaluate', to: 'activities#evaluate'
       end
     end
-
-
+    
+    
     resources :resources
     resources :characters do
       member do
-        post 'start_gathering', to: 'characters#start_gathering'
+        post 'start_activity', to: 'characters#start_activity'
+
+#        post 'start_gathering', to: 'characters#start_gathering'
       end
     end
-
+    
     resources :settlements
+    
+    resources :game_sessions
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

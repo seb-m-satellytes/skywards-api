@@ -44,17 +44,25 @@ class CharactersController < ApplicationController
     @character.destroy!
   end
 
-  def start_gathering
+  def start_activity
     character = Character.find(params[:id])
+    activity_type = params[:activity_type]
+    object_type = params[:object_type]
 
     if character.activities.where("end_time > ?", Time.current).exists?
       return render json: { error: "Character is already engaged in an activity." }, status: :unprocessable_entity
     end
 
+    duration = if object_type
+                 ::CONSTS[activity_type][object_type][:duration]
+               else
+                 ::CONSTS[activity_type][:duration]
+               end
+
     activity = character.activities.create(
-      activity_type: 'gathering',
+      activity_type: activity_type,
       start_time: Time.current,
-      end_time: Time.current + 1.minute # Example duration
+      end_time: Time.current + duration.minute
     )
     
     if activity.persisted?

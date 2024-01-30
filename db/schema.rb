@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_29_140233) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_30_102446) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
     t.datetime "start_time"
@@ -34,6 +34,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_29_140233) do
     t.index ["settlement_id"], name: "index_characters_on_settlement_id"
   end
 
+  create_table "game_sessions", force: :cascade do |t|
+    t.datetime "start_time"
+    t.integer "in_game_minutes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string "resource_type"
     t.integer "amount", default: 0
@@ -49,7 +56,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_29_140233) do
     t.integer "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "game_session_id"
+    t.index ["game_session_id"], name: "index_settlements_on_game_session_id"
   end
 
   add_foreign_key "characters", "settlements"
+  add_foreign_key "settlements", "game_sessions"
 end

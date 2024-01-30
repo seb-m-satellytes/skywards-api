@@ -1,0 +1,7 @@
+gathering:
+  duration: 10
+construction:
+  shed:
+    duration: 10
+  tent:
+    duration: 5
