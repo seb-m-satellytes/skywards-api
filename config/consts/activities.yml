@@ -1,7 +1,7 @@
 gathering:
-  duration: 10
+  duration: 4
 construction:
   shed:
-    duration: 10
+    duration: 2
   tent:
     duration: 5

@@ -18,6 +18,9 @@ class GameSessionsController < ApplicationController
       methods: [:can_go_on_activity]
     }, resources: [] })
 
+    GameSession.first.tick
+    GameSession.first.do_events
+
     render json: {
       game_session: @game_session.as_json,
       current_day: @game_session.current_day,

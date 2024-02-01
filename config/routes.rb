@@ -11,9 +11,7 @@ Rails.application.routes.draw do
     resources :characters do
       member do
         post 'start_activity', to: 'characters#start_activity'
-
-#        post 'start_gathering', to: 'characters#start_gathering'
-      end
+     end
     end
     
     resources :settlements

@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_30_102446) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_01_154256) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
-    t.datetime "start_time"
-    t.datetime "end_time"
+    t.integer "start_time", default: 0
+    t.integer "end_time", default: 0
     t.integer "character_id"
     t.integer "settlement_id"
     t.datetime "created_at", null: false
@@ -31,6 +31,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_30_102446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "settlement_id", null: false
+    t.integer "morale_status"
+    t.string "specialization"
     t.index ["settlement_id"], name: "index_characters_on_settlement_id"
   end
 
@@ -60,6 +62,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_30_102446) do
     t.index ["game_session_id"], name: "index_settlements_on_game_session_id"
   end
 
+  create_table "status_effects", force: :cascade do |t|
+    t.string "name"
+    t.integer "start_time"
+    t.integer "end_time"
+    t.integer "character_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_status_effects_on_character_id"
+  end
+
   add_foreign_key "characters", "settlements"
   add_foreign_key "settlements", "game_sessions"
+  add_foreign_key "status_effects", "characters"
 end

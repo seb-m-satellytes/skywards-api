@@ -40,7 +40,8 @@ class ActivitiesController < ApplicationController
 
   def evaluate
     @activity = Activity.find(params[:id])
-    is_ended = @activity.end_time < Time.now
+    
+    is_ended = @activity.end_time < GameSession.first.in_game_minutes
     is_evaluated = @activity.is_evaluated
 
     if not is_ended
