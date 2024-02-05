@@ -54,18 +54,31 @@ class ActivitiesController < ApplicationController
       return
     end
 
-    if is_ended && !is_evaluated
-      resources_gained = ResourceGenerator.generate_resources
+    if @activity.activity_type == 'gathering'
+      if is_ended && !is_evaluated
+        resources_gained = ResourceGenerator.generate_resources
 
-      resources_gained.each do |type, amount|
-        @activity.character.settlement.update_resource(type, amount)
+        resources_gained.each do |type, amount|
+          @activity.character.settlement.update_resource(type, amount)
+        end
+
+        @activity.is_evaluated = Time.now
+        @activity.save!
       end
 
-      @activity.is_evaluated = Time.now
-      @activity.save!
+      render json: { resources_gained: resources_gained }
     end
 
-    render json: { resources_gained: resources_gained }
+    if @activity.activity_type == 'constructing'
+      if is_ended && !is_evaluated
+        
+
+        @activity.is_evaluated = Time.now
+        @activity.save!
+      end
+
+      render json: { finished_building: @activity.activity_target}
+    end
   end
 
   private

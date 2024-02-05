@@ -49,7 +49,7 @@ class Character < ApplicationRecord
 
     # health, morale
     h = 4
-    m = 4
+    m = 3
 
     changes = {
         6 => { breakfast: [h, m], lunch: [h, m], dinner: [h, m] }, # h + / m +

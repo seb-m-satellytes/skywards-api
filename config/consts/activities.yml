@@ -1,7 +1,9 @@
 gathering:
   duration: 4
-construction:
-  shed:
-    duration: 2
-  tent:
+building:
+  0:
+    name: "tent"
     duration: 5
+  1:
+    name: "shed"
+    duration: 10

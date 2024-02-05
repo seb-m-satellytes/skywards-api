@@ -1,0 +1,4 @@
+resources:
+ - FOOD: "food"
+ - WATER: "water"
+ - BUILDING_SUPPLY: "building supply"

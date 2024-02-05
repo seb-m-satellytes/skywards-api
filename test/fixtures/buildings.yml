@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  settlement: one
+  type: 
+  build_at: 1
+
+two:
+  name: MyString
+  settlement: two
+  type: 
+  build_at: 1

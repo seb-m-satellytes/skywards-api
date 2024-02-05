@@ -1,5 +1,6 @@
 class Settlement < ApplicationRecord
   has_many :characters
+  has_many :buildings
   has_many :resources, as: :resourceable
 
   def update_resource(resource_type, amount)
