@@ -13,10 +13,14 @@ class SettlementsController < ApplicationController
     includes_array = []
     includes_array << :characters if params[:includeCharacters] == 'true'
     includes_array << :resources if params[:includeResources] == 'true'
+    includes_array << :buildings if params[:includeBuildings] == 'true'
 
     @settlement = Settlement.includes(includes_array).find(params[:id])
 
-    render json: @settlement, include: includes_array
+    render json: @settlement.as_json(
+      include: includes_array,
+      methods: [:available_slots, :max_building_slots]
+    )
   end
 
   # POST /settlements

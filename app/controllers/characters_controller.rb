@@ -48,31 +48,17 @@ class CharactersController < ApplicationController
     current_time = GameSession.first.in_game_minutes
     character = Character.find(params[:id])
     activity_type = params[:activity_type]
-    activity_target = params[:activity_target]
-
+   
     if character.activities.where("end_time > ?", current_time).exists?
       return render json: { error: "Character is already engaged in an activity." }, status: :unprocessable_entity
     end
 
     activities = ::CONSTS["activities"]
 
-    debugger
-
-    duration = if activity_target != 'none'
-      activities[activity_type][activity_target.to_i]['duration']
-    else
-      activities[activity_type]['duration']
-    end
-
-    target_name = if activity_target != 'none'
-      activities[activity_type][activity_target.to_i]['name']
-    else
-      nil
-    end
-
+    duration = activities[activity_type]['duration']
+   
     activity = character.activities.create(
       activity_type: activity_type,
-      activity_target: target_name,
       start_time: current_time,
       end_time: current_time + duration * 60
     )

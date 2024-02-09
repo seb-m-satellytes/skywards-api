@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     end
     
     resources :settlements
+    resources :buildings
     
     resources :game_sessions
   end
