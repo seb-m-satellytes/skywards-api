@@ -6,6 +6,8 @@ class BuildingsController < ApplicationController
     @blueprint_id = params[:blueprint_id]
     @worker_id = params[:worker_id]
     @slots_to_use = params[:slots_to_use].split(',')
+
+    current_time = GameSession.first.in_game_minutes
     
     if requirements_met(@settlement, @blueprint_id, @slots_to_use)
       blueprint = BuildingBlueprint.find(@blueprint_id)
@@ -14,7 +16,8 @@ class BuildingsController < ApplicationController
         settlement_id: @settlement.id,
         name: blueprint.name.capitalize,
         building_type: blueprint.name,
-        status: "under_construction"
+        status: "under_construction",
+        built_at: GameSession.first.in_game_minutes + blueprint.build_time
       }
 
       @building = Building.create!(building_params)
@@ -24,6 +27,14 @@ class BuildingsController < ApplicationController
         raise "Slot not found or does not belong to settlement" unless slot.settlement_id == @settlement.id
         slot.update!(building: @building)
       end
+
+      worker = Character.find(@worker_id)
+      worker.activities.create!(
+        activity_type: "building",
+        activity_target: blueprint.name,
+        start_time: current_time,
+        end_time: current_time + blueprint.build_time,
+      )
 
       render json: @building, status: :created
     else

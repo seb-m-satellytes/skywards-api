@@ -1,5 +1,7 @@
 gathering:
   duration: 4
+clearing_slot:
+  duration: 3
 building:
   0:
     name: "tent"

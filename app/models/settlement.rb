@@ -11,7 +11,11 @@ class Settlement < ApplicationRecord
   end
 
   def available_slots
-    slots.where(building_id: nil).count
+    slots.where(building_id: nil).where(usable: 1).count
+  end
+
+  def clearable_slots
+    slots.where(building_id: nil).where(usable: 0).count
   end
 
   def update_resource(resource_type, amount)

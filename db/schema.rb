@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_09_141030) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_12_134824) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
     t.integer "start_time", default: 0
@@ -32,6 +32,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_09_141030) do
     t.integer "slots_required"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "unlock_at_settlement_level", default: 1
   end
 
   create_table "buildings", force: :cascade do |t|
@@ -92,6 +93,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_09_141030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "settlement_slot_id"
+    t.integer "usable", default: 0
     t.index ["building_id"], name: "index_slots_tables_on_building_id"
     t.index ["settlement_id"], name: "index_slots_tables_on_settlement_id"
   end

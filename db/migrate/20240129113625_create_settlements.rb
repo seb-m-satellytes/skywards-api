@@ -3,7 +3,7 @@ class CreateSettlements < ActiveRecord::Migration[7.1]
     create_table :settlements do |t|
       t.string :name
       t.string :location
-      t.integer :level
+      t.integer :level, default: 1
 
       t.timestamps
     end

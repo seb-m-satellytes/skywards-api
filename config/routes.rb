@@ -6,7 +6,6 @@ Rails.application.routes.draw do
       end
     end
     
-    
     resources :resources
     resources :characters do
       member do
@@ -14,10 +13,18 @@ Rails.application.routes.draw do
      end
     end
     
-    resources :settlements
+    resources :settlements do
+      member do
+        post 'clear_slots', to: 'settlements#clear_slots'
+      end
+    end
+  
+
     resources :buildings
     
     resources :game_sessions
+
+    get 'blueprints', to: 'blueprints#show'
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

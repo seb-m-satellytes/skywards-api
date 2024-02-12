@@ -64,12 +64,11 @@ class ActivitiesController < ApplicationController
 
         @activity.is_evaluated = Time.now
         @activity.save!
+        render json: { finished: 'gathering', resources_gained: resources_gained }
       end
-
-      render json: { resources_gained: resources_gained }
     end
 
-    if @activity.activity_type == 'constructing'
+    if @activity.activity_type == 'building'
       if is_ended && !is_evaluated
         
 
@@ -78,6 +77,24 @@ class ActivitiesController < ApplicationController
       end
 
       render json: { finished_building: @activity.activity_target}
+    end
+
+    if @activity.activity_type == 'clearing_slot'
+      if is_ended && !is_evaluated
+        settlement = @activity.character.settlement
+        slot = settlement.slots.find_by(settlement_slot_id: @activity.activity_target)
+        slot.update!(usable: 1)
+
+        resources_gained = ResourceGenerator.generate_resources(:building_materials, :tools)
+
+        resources_gained.each do |type, amount|
+          settlement.update_resource(type, amount)
+        end
+
+        @activity.is_evaluated = Time.now
+        @activity.save!
+        render json: { finished: 'gathering', resources_gained: resources_gained }
+      end
     end
   end
 

@@ -10,14 +10,28 @@ class GameSessionsController < ApplicationController
 
   # GET /game_sessions/1
   def show
-    @game_session = GameSession.includes(settlements: [characters: [:activities, :resources, :status_effects], resources: [], buildings: []]).find(params[:id])
+    @game_session = GameSession.includes(settlements: [characters: [:activities, :resources, :status_effects], resources: [], buildings: [], slots: []]).find(params[:id])
 
-    settlements_data = @game_session.settlements.as_json(include: 
-    { characters: { 
-      include: [:activities, :resources, 
-        status_effects: { only: :name }], 
-      methods: [:can_go_on_activity]
-    }, resources: [], buildings: [] })
+    settlements_data = @game_session.settlements.as_json(
+      include: { 
+        characters: { 
+          include: [
+            :activities, 
+            :resources, 
+            status_effects: { only: :name }
+          ], 
+          methods: [:can_go_on_activity]
+        },
+        resources: [], 
+        slots: {
+          only: [:settlement_slot_id, :building_id, :usable]
+        },
+        buildings: {
+          only: [:id, :name, :building_type, :status]
+        }
+      },
+      methods: [:max_building_slots, :available_slots, :clearable_slots]
+    )
 
     GameSession.first.tick
     GameSession.first.do_events

@@ -48,6 +48,45 @@ class SettlementsController < ApplicationController
     @settlement.destroy!
   end
 
+  def clear_slots
+    #{}"character_id"=>"1",
+    #"controller"=>"settlements",
+    ##"action"=>"clear_slots",
+   # "id"=>"2"}
+    current_time = GameSession.first.in_game_minutes
+    @settlement = Settlement.find(params[:id])
+    @worker_id = params[:worker_id]
+    slot_to_clear = params[:slot]
+
+    slot = @settlement.slots.find_by(settlement_slot_id: slot_to_clear)
+
+    if slot.usable == 1
+      render json: { error: "Slot is already clear" }, status: :unprocessable_entity
+      return
+    end
+
+    if slot.building.present?
+      render json: { error: "Slot is occupied" }, status: :unprocessable_entity
+      return
+    end
+
+
+    activities = ::CONSTS["activities"]
+    activity_type = "clearing_slot"
+
+    duration = activities[activity_type]['duration']
+
+    worker = Character.find(@worker_id)
+    worker.activities.create!(
+      activity_type: activity_type,
+      activity_target: slot_to_clear,
+      start_time: current_time,
+      end_time: current_time + duration * 60
+    )
+
+    render json: { message: "#{activity_type} started!" }, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_settlement

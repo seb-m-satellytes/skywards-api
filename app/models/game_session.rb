@@ -21,19 +21,22 @@ class GameSession < ApplicationRecord
 
   def do_events
     if self.current_time == '06:00'
-      Settlement.first.all_eat('breakfast')
+      #Settlement.first.all_eat('breakfast')
     end
 
     if self.current_time == '12:00'
-      Settlement.first.all_eat('lunch')
+      #Settlement.first.all_eat('lunch')
     end
 
     if self.current_time == '18:00'
-      Settlement.first.all_eat('dinner')
+      #Settlement.first.all_eat('dinner')
     end
-    
-    if self.current_time == '23:59'
-      # - update health and morale of citizen
+
+    # check if any buildings with the status under_construction are done
+    Settlement.first.buildings.each do |building|
+      if building.status == 'under_construction' && building.built_at <= self.in_game_minutes
+        building.update!(status: "usable")
+      end
     end
   end
 end
