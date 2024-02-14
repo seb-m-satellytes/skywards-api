@@ -2,3 +2,5 @@ gathering:
   duration: 4
 clearing_slot:
   duration: 3
+healing:
+  duration: 6

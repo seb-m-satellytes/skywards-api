@@ -53,5 +53,22 @@ class GameSession < ApplicationRecord
       end
     end
 
+    settlement.characters.each do |character|
+      if character.activities.where(activity_type: "healing").exists?
+        logger.info("Healer: #{p character}")
+
+        character.activities.where(activity_type: "healing").each do |activity|
+          patient = Character.find(activity.activity_target)
+          logger.info("Healer: #{p patient}")
+
+          if activity.end_time == self.in_game_minutes
+            patient.heal(self.in_game_minutes)
+            activity.is_evaluated = Time.now
+            activity.save!
+          end 
+        end
+      end
+    end
+
   end
 end

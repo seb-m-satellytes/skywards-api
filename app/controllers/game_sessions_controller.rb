@@ -28,11 +28,13 @@ class GameSessionsController < ApplicationController
         activities: [],
         characters: { 
           include: [
-            :activities, 
-            :resources, 
-            status_effects: { only: :name }
+            :resources
           ], 
-          methods: [:can_go_on_activity]
+          methods: [
+            :can_go_on_activity, 
+            :current_activity,
+            :current_status_effect
+          ]
         },
         resources: [], 
         slots: {

@@ -6,6 +6,7 @@ class Character < ApplicationRecord
   
   def can_go_on_activity
     return false if health_status <= 30
+    return false if self.status_effects.any? { |effect| effect.name == 'injured' }
     return true if activities.empty?
 
     activities.none? { |activity| activity.end_time.nil? || activity.is_evaluated.nil? }
@@ -18,6 +19,31 @@ class Character < ApplicationRecord
     
     adjust_health_and_morale(ration_buffer_days, mealname, food, water)
     return food, water
+  end
+
+  def heal(end_time = nil)
+    self.status_effects.where(name: 'injured').each do |effect|
+      effect.end_time = end_time
+      effect.save!
+    end
+  end
+
+  def current_activity
+    activities.where(is_evaluated: nil).first
+  end
+
+  def current_status_effect
+    status_effects.where("end_time > ?", GameSession.first.in_game_minutes).first
+  end
+
+  def heal_others(injured_characters)
+    # Logic for healing others
+    # You might want to loop through all characters in the settlement and heal them
+    # You might want to apply a status effect to the character to prevent them from being healed again for a certain period of time
+    # You might want to have a chance of success or failure
+    # You might want to have the character's healing skill affect the outcome
+    # You might want to have the character's health and morale affect the outcome
+    # You might want to have the character's health and morale affected by the outcome
   end
 
   private
