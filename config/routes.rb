@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :settlements do
       member do
         post 'clear_slots', to: 'settlements#clear_slots'
+        post 'hire', to: 'settlements#hire'
       end
     end
   

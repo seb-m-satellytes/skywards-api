@@ -1,7 +1,7 @@
 class Character < ApplicationRecord
   belongs_to :settlement
   has_many :resources, as: :resourceable
-  has_many :activities, dependent: :destroy
+  has_many :activities, as: :activityable, dependent: :destroy
   has_many :status_effects, dependent: :destroy
   
   def can_go_on_activity

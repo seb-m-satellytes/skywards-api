@@ -58,8 +58,10 @@ class ActivitiesController < ApplicationController
       if is_ended && !is_evaluated
         resources_gained = ResourceGenerator.generate_resources
 
+        settlement = @activity.activityable.settlement if @activity.activityable_type == 'Character'
+
         resources_gained.each do |type, amount|
-          @activity.character.settlement.update_resource(type, amount)
+          settlement.update_resource(type, amount) if settlement.present?
         end
 
         @activity.is_evaluated = Time.now
@@ -96,16 +98,41 @@ class ActivitiesController < ApplicationController
         render json: { finished: 'gathering', resources_gained: resources_gained }
       end
     end
+
+    if @activity.activity_type == 'hire'
+      if is_ended && !is_evaluated
+        settlement = @activity.activityable if @activity.activityable_type == 'Settlement'
+
+        character = Character.new(
+          name: Faker::Name.name,
+          age: rand(18..70),
+          settlement_id: settlement.id,
+          specialization: @activity.activity_target,
+          morale_status: rand(80..100),
+          health_status: rand(55..90),
+          skill_level: rand(1..settlement.level)
+        )
+
+        if character.save
+          @activity.is_evaluated = Time.now
+          @activity.save!
+          render json: { finished: 'hiring', new_character: character }
+        else
+          render json: { error: character.errors }, status: :unprocessable_entity
+        end
+
+      end
+    end
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_activity
-      @activity = Activity.find(params[:id])
-    end
+  def set_activity
+    @activity = Activity.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def activity_params
-      params.require(:activity).permit(:activity_type, :start_time, :end_time, :character_id, :settlement_id)
-    end
+  # Only allow a list of trusted parameters through.
+  def activity_params
+    params.require(:activity).permit(:activity_type, :start_time, :end_time, :character_id, :settlement_id)
+  end
 end

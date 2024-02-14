@@ -3,7 +3,8 @@ class Settlement < ApplicationRecord
   has_many :slots
   has_many :buildings, -> { distinct }, through: :slots
   has_many :resources, as: :resourceable
-
+  has_many :activities, as: :activityable, dependent: :destroy
+  
   after_create :initialize_slots
 
   def max_building_slots
@@ -16,6 +17,14 @@ class Settlement < ApplicationRecord
 
   def clearable_slots
     slots.where(building_id: nil).where(usable: 0).count
+  end
+
+  def total_housing_capacity
+    total_housing_capacity = 0
+    buildings.joins(:slots).distinct.each do |building|
+      total_housing_capacity += building.housing_capacity
+    end
+    total_housing_capacity
   end
 
   def update_resource(resource_type, amount)

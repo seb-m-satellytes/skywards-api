@@ -5,7 +5,6 @@ class CreateActivities < ActiveRecord::Migration[7.1]
       t.timestamp :start_time
       t.timestamp :end_time
       t.integer :character_id
-      t.integer :settlement_id
 
       t.timestamps
     end

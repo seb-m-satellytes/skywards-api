@@ -49,10 +49,6 @@ class SettlementsController < ApplicationController
   end
 
   def clear_slots
-    #{}"character_id"=>"1",
-    #"controller"=>"settlements",
-    ##"action"=>"clear_slots",
-   # "id"=>"2"}
     current_time = GameSession.first.in_game_minutes
     @settlement = Settlement.find(params[:id])
     @worker_id = params[:worker_id]
@@ -85,6 +81,22 @@ class SettlementsController < ApplicationController
     )
 
     render json: { message: "#{activity_type} started!" }, status: :ok
+  end
+
+  def hire
+    @settlement = Settlement.find(params[:id])
+
+    activity = @settlement.activities.create!(
+      activity_type: "hire",
+      activity_target: params[:specialization],
+      start_time: GameSession.first.in_game_minutes,
+    )
+
+    if activity.persisted?
+      render json: { message: "Hire started for #{params[:specialization]}!" }, status: :ok
+    else
+      render json: { error: "Could not start hire activity" }, status: :unprocessable_entity
+    end
   end
 
   private

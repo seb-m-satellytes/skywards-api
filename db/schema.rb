@@ -10,17 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_12_134824) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
     t.integer "start_time", default: 0
     t.integer "end_time", default: 0
-    t.integer "character_id"
-    t.integer "settlement_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "is_evaluated"
     t.string "activity_target"
+    t.string "activityable_type"
+    t.integer "activityable_id"
+    t.index ["activityable_type", "activityable_id"], name: "index_activities_on_activityable"
   end
 
   create_table "building_blueprints", force: :cascade do |t|
@@ -33,6 +34,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_12_134824) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "unlock_at_settlement_level", default: 1
+    t.integer "housing_capacity"
   end
 
   create_table "buildings", force: :cascade do |t|
@@ -44,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_12_134824) do
     t.datetime "updated_at", null: false
     t.integer "slot", default: 0
     t.string "status"
+    t.integer "housing_capacity"
     t.index ["settlement_id"], name: "index_buildings_on_settlement_id"
   end
 

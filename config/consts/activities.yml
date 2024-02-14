@@ -2,10 +2,3 @@ gathering:
   duration: 4
 clearing_slot:
   duration: 3
-building:
-  0:
-    name: "tent"
-    duration: 5
-  1:
-    name: "shed"
-    duration: 10

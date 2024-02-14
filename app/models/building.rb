@@ -1,6 +1,7 @@
 class Building < ApplicationRecord
   has_many :slots
   has_one :settlement
+  has_many :activities, as: :activityable, dependent: :destroy
   before_create :deduct_resources_from_settlement
   
   def is_finished(built_at, in_game_minutes)

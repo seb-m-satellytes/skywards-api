@@ -1,3 +1,3 @@
 class Activity < ApplicationRecord
-  belongs_to :character
+  belongs_to :activityable, polymorphic: true
 end
