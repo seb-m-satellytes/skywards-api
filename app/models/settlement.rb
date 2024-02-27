@@ -1,9 +1,12 @@
 class Settlement < ApplicationRecord
+  has_one :game_session
   has_many :characters
   has_many :slots
   has_many :buildings, -> { distinct }, through: :slots
   has_many :resources, as: :resourceable
   has_many :activities, as: :activityable, dependent: :destroy
+  
+  include GameEventLoggable
   
   after_create :initialize_slots
 
@@ -22,7 +25,8 @@ class Settlement < ApplicationRecord
   def total_housing_capacity
     total_housing_capacity = 0
     buildings.joins(:slots).distinct.each do |building|
-      total_housing_capacity += building.housing_capacity
+      next if building.status != 'usable'
+      total_housing_capacity += building.housing_capacity || 0
     end
     total_housing_capacity
   end
@@ -37,6 +41,8 @@ class Settlement < ApplicationRecord
     end
     
     resource.save!
+    log_event("#{resource_type.capitalize} descreased by #{amount.abs}.") if amount < 0
+    log_event("#{resource_type.capitalize} increased by #{amount.abs}.") if amount > 0
   end
 
   def has_resources?(blueprint_id)
@@ -51,7 +57,7 @@ class Settlement < ApplicationRecord
   end
 
   def all_eat(mealname)
-    logger.info('Calculating food')
+    log_event("Preparing to eat #{mealname}.")
 
     max_food_per_character_day = 3
     max_water_per_character_day = 3
@@ -63,9 +69,13 @@ class Settlement < ApplicationRecord
 
     current_water = self.resources.find_by(resource_type: 'water').amount || 0
     current_food = self.resources.find_by(resource_type: 'food').amount || 0
+
+    # If there is no food or water, characters will not eat
+    return if current_food == 0 || current_water == 0
+      
     current_buffer_days = (current_food + current_water) / max_consumption_per_day
 
-    logger.info("Current buffer days: #{current_buffer_days}")
+    log_event("Current buffer days for food: #{current_buffer_days}")
 
     self.characters.each do |character|
       food_consumed, water_consumed = character.consume_meal(current_buffer_days, mealname)

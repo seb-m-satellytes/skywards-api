@@ -72,8 +72,6 @@ class ActivitiesController < ApplicationController
 
     if @activity.activity_type == 'building'
       if is_ended && !is_evaluated
-        
-
         @activity.is_evaluated = Time.now
         @activity.save!
       end
@@ -83,7 +81,9 @@ class ActivitiesController < ApplicationController
 
     if @activity.activity_type == 'clearing_slot'
       if is_ended && !is_evaluated
-        settlement = @activity.character.settlement
+        character = @activity.activityable if @activity.activityable_type == 'Character'
+
+        settlement = character.settlement
         slot = settlement.slots.find_by(settlement_slot_id: @activity.activity_target)
         slot.update!(usable: 1)
 
@@ -95,7 +95,7 @@ class ActivitiesController < ApplicationController
 
         @activity.is_evaluated = Time.now
         @activity.save!
-        render json: { finished: 'gathering', resources_gained: resources_gained }
+        render json: { finished: 'clearing_slot', resources_gained: resources_gained }
       end
     end
 
@@ -104,7 +104,7 @@ class ActivitiesController < ApplicationController
         settlement = @activity.activityable if @activity.activityable_type == 'Settlement'
 
         character = Character.new(
-          name: Faker::Name.name,
+          name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
           age: rand(18..70),
           settlement_id: settlement.id,
           specialization: @activity.activity_target,

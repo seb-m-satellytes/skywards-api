@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_19_092605) do
   create_table "activities", force: :cascade do |t|
     t.string "activity_type"
     t.integer "start_time", default: 0
@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
     t.string "activityable_type"
     t.integer "activityable_id"
     t.index ["activityable_type", "activityable_id"], name: "index_activities_on_activityable"
+  end
+
+  create_table "activity_logs", force: :cascade do |t|
+    t.text "description"
+    t.string "loggable_type"
+    t.integer "loggable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "in_game_time"
+    t.index ["loggable_type", "loggable_id"], name: "index_activity_logs_on_loggable"
   end
 
   create_table "building_blueprints", force: :cascade do |t|
@@ -39,7 +49,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
 
   create_table "buildings", force: :cascade do |t|
     t.string "name"
-    t.integer "settlement_id", null: false
     t.string "building_type"
     t.integer "built_at"
     t.datetime "created_at", null: false
@@ -47,7 +56,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
     t.integer "slot", default: 0
     t.string "status"
     t.integer "housing_capacity"
-    t.index ["settlement_id"], name: "index_buildings_on_settlement_id"
   end
 
   create_table "characters", force: :cascade do |t|
@@ -55,7 +63,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
     t.integer "age"
     t.integer "health_status"
     t.integer "skill_level"
-    t.string "current_activity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "settlement_id", null: false
@@ -111,7 +118,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_14_084040) do
     t.index ["character_id"], name: "index_status_effects_on_character_id"
   end
 
-  add_foreign_key "buildings", "settlements"
   add_foreign_key "characters", "settlements"
   add_foreign_key "settlements", "game_sessions"
   add_foreign_key "slots", "buildings"

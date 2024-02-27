@@ -1,8 +1,8 @@
 class Building < ApplicationRecord
-  has_many :slots
-  has_one :settlement
+  has_many :slots, dependent: :nullify
+  has_one :settlement, through: :slot
   has_many :activities, as: :activityable, dependent: :destroy
-  before_create :deduct_resources_from_settlement
+  # before_create :deduct_resources_from_settlement
   
   def is_finished(built_at, in_game_minutes)
     in_game_minutes - built_at > 0
@@ -11,7 +11,7 @@ class Building < ApplicationRecord
   def deduct_resources_from_settlement
     blueprint = BuildingBlueprint.find_by(name: self.building_type)
     blueprint.base_resources.each do |resource_type, amount|
-      settlement = Settlement.find(self.settlement_id)
+      settlement = Settlement.find(self.slots.first.settlement_id)
       
       resource = settlement.resources.find_by(resource_type: resource_type)
       

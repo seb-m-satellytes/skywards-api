@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :activity_logs
   scope '/api/v1' do
     resources :activities do
       member do

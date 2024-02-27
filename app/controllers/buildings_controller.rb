@@ -13,11 +13,11 @@ class BuildingsController < ApplicationController
       blueprint = BuildingBlueprint.find(@blueprint_id)
 
       building_params = {
-        settlement_id: @settlement.id,
         name: blueprint.name.capitalize,
         building_type: blueprint.name,
         status: "under_construction",
-        built_at: GameSession.first.in_game_minutes + blueprint.build_time
+        built_at: GameSession.first.in_game_minutes + blueprint.build_time,
+        housing_capacity: blueprint.housing_capacity,
       }
 
       @building = Building.create!(building_params)
@@ -27,6 +27,8 @@ class BuildingsController < ApplicationController
         raise "Slot not found or does not belong to settlement" unless slot.settlement_id == @settlement.id
         slot.update!(building: @building)
       end
+
+      @building.deduct_resources_from_settlement
 
       worker = Character.find(@worker_id)
       worker.activities.create!(
