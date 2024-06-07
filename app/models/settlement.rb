@@ -5,10 +5,39 @@ class Settlement < ApplicationRecord
   has_many :buildings, -> { distinct }, through: :slots
   has_many :resources, as: :resourceable
   has_many :activities, as: :activityable, dependent: :destroy
-  
+  has_one :xp_point, as: :xpable, dependent: :destroy
+
   include GameEventLoggable
   
-  after_create :initialize_slots
+  # after_create :initialize_slots
+
+  def increase_xp(amount)
+    xp_point = self.xp_point || self.create_xp_point
+    xp_point.xp += amount
+    xp_point.save!
+
+    log_event("Settlement got #{amount} XP!")
+
+    level_up
+  end
+
+  def level_up
+    levels= {
+      1 => 0,
+      2 => 1500,
+      3 => 3000,
+    }
+
+    current_xp = self.xp_point.xp
+    next_level = self.level + 1
+    next_level_xp = levels[next_level]
+
+    if current_xp >= next_level_xp
+      self.level = next_level
+      self.save!
+      log_event("Settlement leveled up to level #{next_level}!")
+    end
+  end
 
   def max_building_slots
     slots.count

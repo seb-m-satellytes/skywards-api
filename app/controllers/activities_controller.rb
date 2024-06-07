@@ -72,6 +72,12 @@ class ActivitiesController < ApplicationController
 
     if @activity.activity_type == 'building'
       if is_ended && !is_evaluated
+        character = @activity.activityable if @activity.activityable_type == 'Character'
+
+        settlement = character.settlement
+        
+        settlement.increase_xp(350)
+
         @activity.is_evaluated = Time.now
         @activity.save!
       end
@@ -86,6 +92,8 @@ class ActivitiesController < ApplicationController
         settlement = character.settlement
         slot = settlement.slots.find_by(settlement_slot_id: @activity.activity_target)
         slot.update!(usable: 1)
+
+        settlement.increase_xp(250)
 
         resources_gained = ResourceGenerator.generate_resources(:building_materials, :tools)
 
@@ -112,6 +120,8 @@ class ActivitiesController < ApplicationController
           health_status: rand(55..90),
           skill_level: rand(1..settlement.level)
         )
+
+        settlement.increase_xp(500)
 
         if character.save
           @activity.is_evaluated = Time.now

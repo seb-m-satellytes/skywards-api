@@ -37,7 +37,7 @@ class GameSession < ApplicationRecord
         settlement.all_eat('dinner')
       end
 
-    # check if any buildings with the status under_construction are done
+      # check if any buildings with the status under_construction are done
       settlement.buildings.each do |building|
         if building.status == 'under_construction' && building.built_at <= self.in_game_minutes
           building.update!(status: "usable")
@@ -50,6 +50,7 @@ class GameSession < ApplicationRecord
           probability = (elapsed_minutes.to_f / 1440) * 100
           logger.info("Probability: #{probability}")
           if rand(100) < probability
+            
             activity.end_time = self.in_game_minutes
             activity.save!
           end

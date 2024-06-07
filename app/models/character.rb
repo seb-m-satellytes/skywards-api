@@ -3,7 +3,8 @@ class Character < ApplicationRecord
   has_many :resources, as: :resourceable
   has_many :activities, as: :activityable, dependent: :destroy
   has_many :status_effects, dependent: :destroy
-  
+  has_one :xp_point, as: :xpable, dependent: :destroy
+
   include GameEventLoggable
 
   def can_go_on_activity
@@ -16,9 +17,13 @@ class Character < ApplicationRecord
 
   def consume_meal(ration_buffer_days, mealname)
     food, water = meal_plan(ration_buffer_days, mealname)
-    
-    log_event("#{self.name} ate #{mealname} with #{food} food and #{water} water.")
-    
+
+    unless food == 0 && water == 0
+      log_event("#{self.name} ate #{mealname} with #{food} food and #{water} water.")
+    else
+      log_event("#{self.name} did not eat #{mealname}.")
+    end
+
     adjust_health_and_morale(ration_buffer_days, mealname, food, water)
     return food, water
   end

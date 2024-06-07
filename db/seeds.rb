@@ -34,8 +34,10 @@ BuildingBlueprint.create([
 ])
 
 # Settlements
-settlement1 = Settlement.create(name: 'Outside', location: 'outside', level: 0, game_session_id: game_session)
-settlement2 = Settlement.create(name: Faker::Address.community, location: Faker::Address.street_address, level: 1, game_session_id: game_session)
+settlement1 = Settlement.create(name: 'Outside', location: 'outside', level: 0, game_session_id: game_session.id)
+settlement2 = Settlement.create(name: Faker::Address.community, location: Faker::Address.street_address, level: 1, game_session_id: game_session.id)
+
+settlement2.create_xp_point(xp: 450)
 
 # Characters
 Character.create([
@@ -43,7 +45,7 @@ Character.create([
   { name: Faker::Name.name, age: rand(18..70), health_status: rand(50..85), skill_level: 1, settlement: settlement2, morale_status: rand(35..65), specialization: 'engineer' },
 ])
 
-injuredChar = Character.create(name: "#{Faker::Name.first_name Faker::Name.last_name}", age: rand(18..70), health_status: rand(50..85), skill_level: 1, settlement: settlement2, morale_status: rand(35..65), specialization: 'engineer')
+injuredChar = Character.create(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}", age: rand(18..70), health_status: rand(50..85), skill_level: 1, settlement: settlement2, morale_status: rand(35..65), specialization: 'engineer')
 
 
 building_tent = Building.create(name: 'Tent', building_type: 'tent', built_at: 0, slot: 0, status: 'usable', housing_capacity: 3)
@@ -51,12 +53,12 @@ building_tent = Building.create(name: 'Tent', building_type: 'tent', built_at: 0
 Resource.create([
   { resource_type: 'water', amount: 25, resourceable: settlement2 },
   { resource_type: 'food', amount: 25, resourceable: settlement2 },
-  { resource_type: 'tools', amount: 0, resourceable: settlement2 },
-  { resource_type: 'building_materials', amount: 1, resourceable: settlement2 }
+  { resource_type: 'tools', amount: 1, resourceable: settlement2 },
+  { resource_type: 'building_materials', amount: 2, resourceable: settlement2 }
 ])
 
 # Slots
-Slot.create([
+Slot.update([
   { settlement: settlement2, building: building_tent, settlement_slot_id: 1, usable: true },
   { settlement: settlement2, building: nil, settlement_slot_id: 2, usable: false },
   { settlement: settlement2, building: nil, settlement_slot_id: 3, usable: false },
